@@ -18,7 +18,7 @@ Usage: ./install.sh [options]
 
 Options:
   --dry-run                 Print actions without making changes
-  --only <git|ghostty|tmux|pi>  Link only one config target
+  --only <git|ghostty|tmux|pi|codex>  Link only one config target
   --platform-test <name>    Override detected platform (for testing)
   -h, --help                Show this help
 EOF
@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --only)
       if [[ $# -lt 2 ]]; then
-        err "--only requires a value: git or ghostty"
+        err "--only requires a config target"
         exit 1
       fi
       ONLY="$2"
@@ -67,9 +67,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$ONLY" in
-  all|git|ghostty|tmux|pi) ;;
+  all|git|ghostty|tmux|pi|codex) ;;
   *)
-    err "Invalid --only value '$ONLY'. Expected one of: git, ghostty, tmux, pi"
+    err "Invalid --only value '$ONLY'. Expected one of: git, ghostty, tmux, pi, codex"
     exit 1
     ;;
 esac
@@ -176,7 +176,7 @@ link_configs() {
   local targets
   if [[ "$ONLY" == "all" ]]; then
     targets=(ghostty git tmux)
-  elif [[ "$ONLY" == "pi" ]]; then
+  elif [[ "$ONLY" == "pi" || "$ONLY" == "codex" ]]; then
     targets=()
   else
     targets=("$ONLY")
@@ -194,13 +194,37 @@ link_configs() {
     fi
   fi
 
-  # Pi coding agent (targets ~/.pi, not ~/.config)
-  run mkdir -p "$HOME/.pi"
-  if [[ "$DRY_RUN" == true ]]; then
-    echo "[dry-run] stow --adopt -t ~/.pi pi"
-  else
-    cd "$DOTFILES"
-    stow --adopt -t "$HOME/.pi" pi
+  if [[ "$ONLY" == "all" || "$ONLY" == "pi" ]]; then
+    run mkdir -p "$HOME/.pi"
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "[dry-run] stow --adopt -t ~/.pi pi"
+    else
+      cd "$DOTFILES"
+      stow --adopt -t "$HOME/.pi" pi
+    fi
+  fi
+
+  if [[ "$ONLY" == "all" || "$ONLY" == "codex" ]]; then
+    run mkdir -p "$HOME/.codex"
+
+    local codex_source="$DOTFILES/codex/.codex/AGENTS.md"
+    local codex_target="$HOME/.codex/AGENTS.md"
+    if [[ -e "$codex_target" && ! -L "$codex_target" ]]; then
+      if cmp -s "$codex_source" "$codex_target"; then
+        run rm "$codex_target"
+      else
+        err "$codex_target differs from the dotfiles copy"
+        err "Move or reconcile it before installing Codex instructions"
+        exit 1
+      fi
+    fi
+
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "[dry-run] stow -t ~ codex"
+    else
+      cd "$DOTFILES"
+      stow -t "$HOME" codex
+    fi
   fi
 
   ok "Done"
@@ -264,7 +288,9 @@ link_configs
 configure_git
 
 echo ""
-echo "Open a new Ghostty window to pick up changes."
+if [[ "$ONLY" == "all" || "$ONLY" == "ghostty" ]]; then
+  echo "Open a new Ghostty window to pick up changes."
+fi
 if [[ "$ONLY" == "all" || "$ONLY" == "tmux" ]]; then
   echo "In tmux, press 'prefix + I' (Ctrl-b then Shift-i) to install plugins."
 fi
