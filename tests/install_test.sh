@@ -6,10 +6,15 @@ TEST_ROOT="$(mktemp -d)"
 trap 'rm -rf "$TEST_ROOT"' EXIT
 
 mkdir -p "$TEST_ROOT/bin" "$TEST_ROOT/home"
-for command in brew tmux; do
-  printf '#!/usr/bin/env bash\nexit 0\n' > "$TEST_ROOT/bin/$command"
-  chmod +x "$TEST_ROOT/bin/$command"
-done
+cat > "$TEST_ROOT/bin/brew" <<'EOF'
+#!/usr/bin/env bash
+if [[ "$*" == "list --cask font-monaspace" ]]; then
+  exit 1
+fi
+exit 0
+EOF
+printf '#!/usr/bin/env bash\nexit 0\n' > "$TEST_ROOT/bin/tmux"
+chmod +x "$TEST_ROOT/bin/brew" "$TEST_ROOT/bin/tmux"
 
 command -v stow >/dev/null || {
   echo "stow is required to run installer tests" >&2
@@ -38,6 +43,7 @@ assert_lacks() {
 }
 
 output="$(run_only codex)"
+assert_has "$output" "brew install --cask font-monaspace"
 assert_has "$output" "stow -t ~ codex"
 assert_lacks "$output" "stow --adopt -t ~/.pi pi"
 assert_lacks "$output" "Open a new Ghostty window"

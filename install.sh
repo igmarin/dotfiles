@@ -150,24 +150,24 @@ ensure_tpm() {
 ensure_font() {
   info "Font"
   if [[ "$platform" != "darwin" ]]; then
-    warn "Skipping JetBrains Mono install (non-macOS platform)"
-    ok "JetBrains Mono (skipped)"
+    warn "Skipping Monaspace install (non-macOS platform)"
+    ok "Monaspace (skipped)"
     return
   fi
 
   # Check if fonts already exist (regardless of brew's tracking)
-  if ls "$HOME/Library/Fonts/JetBrainsMono"*.ttf >/dev/null 2>&1; then
-    ok "JetBrains Mono already installed"
+  if ls "$HOME/Library/Fonts/MonaspaceNeon"*.otf >/dev/null 2>&1; then
+    ok "Monaspace already installed"
     return
   fi
 
-  if brew list --cask font-jetbrains-mono >/dev/null 2>&1; then
-    ok "JetBrains Mono already installed"
+  if brew list --cask font-monaspace >/dev/null 2>&1; then
+    ok "Monaspace already installed"
     return
   fi
 
-  run brew install --cask font-jetbrains-mono
-  ok "JetBrains Mono"
+  run brew install --cask font-monaspace
+  ok "Monaspace"
 }
 
 link_configs() {

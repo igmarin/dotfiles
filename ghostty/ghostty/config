@@ -1,34 +1,19 @@
-# Ghostty — https://ghostty.org/docs/config
-
-# Font
-font-family = JetBrains Mono
-font-size = 15
+font-family = Monaspace Neon
+font-size = 16
 font-thicken = true
-adjust-cell-height = 30%
+adjust-cell-height = 20%
+background = #080b10
+window-padding-x = 16
+window-padding-y = 4,12
+window-theme = dark
+background-opacity = 0.98
+background-blur = 20
 
-# Theme
-theme = TokyoNight
-background-opacity = 0.9
-background-blur-radius = 20
-minimum-contrast = 1.1
+# Hide the titlebar for a cleaner look
+macos-titlebar-style = hidden
 
-# Window
-window-padding-x = 14
-window-padding-y = 10
-window-decoration = true
-macos-titlebar-style = tabs
-window-save-state = always
-
-# Cursor
+# Small polish
 cursor-style = block
 cursor-style-blink = false
-shell-integration-features = cursor,sudo,title
-
-# Clipboard
-copy-on-select = clipboard
-
-# Mouse
 mouse-hide-while-typing = true
-
-# Splits
-confirm-close-surface = false
+copy-on-select = clipboard

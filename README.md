@@ -4,7 +4,7 @@ Personal configuration files managed with [GNU Stow](https://www.gnu.org/softwar
 
 ## What's included
 
-- **ghostty** -- terminal config (Tokyo Night, JetBrains Mono, split panes)
+- **ghostty** -- terminal config (custom dark theme, Monaspace Neon, hidden titlebar)
 - **git** -- global git config (interactive setup) and ignore patterns
 - **tmux** -- tmux config (Catppuccin Mocha via TPM, all default keybindings)
 - **pi** -- [Pi coding agent](https://pi.dev) settings (model, provider, skills)
@@ -24,7 +24,7 @@ The install script will:
 
 1. Install Homebrew (if missing)
 2. Install GNU Stow and tmux
-3. Install JetBrains Mono font (skips gracefully if already present)
+3. Install Monaspace font (skips gracefully if already present)
 4. Install [TPM](https://github.com/tmux-plugins/tpm) (tmux plugin manager)
 5. Symlink configs via Stow, including `~/.pi/` and `~/.codex/`
 6. **Interactive Git setup** — prompts for your name, email, and preferred editor (only on first run)
