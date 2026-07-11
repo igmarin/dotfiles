@@ -18,5 +18,6 @@
 
 - Discussion and planning are read-only unless I ask for changes.
 - Before coding, define one task with acceptance criteria and checks. A conversation task is enough; create a GitHub issue only when asked.
-- Follow `task-to-pr` for every repository change: branch and worktree from `origin/main`, implement, verify, review, commit, push, and open a GitHub PR without asking again.
+- For each new task, fetch and create a worktree with a short branch from the latest `origin/main`; reuse it for follow-up work. Never use agent names or prefixes.
+- Implement and verify the change, review the diff with a subagent, create a Conventional Commit, push, and open a GitHub PR without asking again.
 - Never merge unless I ask.
