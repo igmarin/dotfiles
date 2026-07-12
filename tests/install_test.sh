@@ -48,6 +48,13 @@ assert_has "$output" "stow -t ~ codex"
 assert_lacks "$output" "stow --adopt -t ~/.pi pi"
 assert_lacks "$output" "Open a new Ghostty window"
 
+output="$(run_only claude)"
+assert_has "$output" "brew install --cask font-monaspace"
+assert_has "$output" "stow -t ~ claude"
+assert_lacks "$output" "stow --adopt -t ~/.pi pi"
+assert_lacks "$output" "stow -t ~ codex"
+assert_lacks "$output" "Open a new Ghostty window"
+
 output="$(run_only pi)"
 assert_has "$output" "stow --adopt -t ~/.pi pi"
 assert_lacks "$output" "stow -t ~ codex"
@@ -63,11 +70,32 @@ output="$($ROOT/install.sh --dry-run --platform-test darwin)"
 assert_has "$output" "stow --adopt ghostty git tmux"
 assert_has "$output" "stow --adopt -t ~/.pi pi"
 assert_has "$output" "stow -t ~ codex"
+assert_has "$output" "stow -t ~ claude"
 
 rm -rf "$HOME/.codex"
 "$ROOT/install.sh" --only codex --platform-test darwin >/dev/null
 test -L "$HOME/.codex/AGENTS.md"
 cmp -s "$HOME/.codex/AGENTS.md" "$ROOT/codex/.codex/AGENTS.md"
+
+rm -rf "$HOME/.claude"
+"$ROOT/install.sh" --only claude --platform-test darwin >/dev/null
+test -L "$HOME/.claude/CLAUDE.md"
+cmp -s "$HOME/.claude/CLAUDE.md" "$ROOT/claude/.claude/CLAUDE.md"
+
+rm "$HOME/.claude/CLAUDE.md"
+echo "different" > "$HOME/.claude/CLAUDE.md"
+if "$ROOT/install.sh" --only claude --platform-test darwin > "$TEST_ROOT/claude-conflict.log" 2>&1; then
+  echo "Expected a conflicting CLAUDE.md to stop installation" >&2
+  exit 1
+fi
+assert_has "$(cat "$TEST_ROOT/claude-conflict.log")" "differs from the dotfiles copy"
+test ! -L "$HOME/.claude/CLAUDE.md"
+test "$(cat "$HOME/.claude/CLAUDE.md")" = "different"
+
+cp "$ROOT/claude/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+"$ROOT/install.sh" --only claude --platform-test darwin >/dev/null
+test -L "$HOME/.claude/CLAUDE.md"
+cmp -s "$HOME/.claude/CLAUDE.md" "$ROOT/claude/.claude/CLAUDE.md"
 
 rm "$HOME/.codex/AGENTS.md"
 echo "different" > "$HOME/.codex/AGENTS.md"

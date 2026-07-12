@@ -18,7 +18,7 @@ Usage: ./install.sh [options]
 
 Options:
   --dry-run                 Print actions without making changes
-  --only <git|ghostty|tmux|pi|codex>  Link only one config target
+  --only <git|ghostty|tmux|pi|codex|claude>  Link only one config target
   --platform-test <name>    Override detected platform (for testing)
   -h, --help                Show this help
 EOF
@@ -67,9 +67,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$ONLY" in
-  all|git|ghostty|tmux|pi|codex) ;;
+  all|git|ghostty|tmux|pi|codex|claude) ;;
   *)
-    err "Invalid --only value '$ONLY'. Expected one of: git, ghostty, tmux, pi, codex"
+    err "Invalid --only value '$ONLY'. Expected one of: git, ghostty, tmux, pi, codex, claude"
     exit 1
     ;;
 esac
@@ -176,7 +176,7 @@ link_configs() {
   local targets
   if [[ "$ONLY" == "all" ]]; then
     targets=(ghostty git tmux)
-  elif [[ "$ONLY" == "pi" || "$ONLY" == "codex" ]]; then
+  elif [[ "$ONLY" == "pi" || "$ONLY" == "codex" || "$ONLY" == "claude" ]]; then
     targets=()
   else
     targets=("$ONLY")
@@ -224,6 +224,29 @@ link_configs() {
     else
       cd "$DOTFILES"
       stow -t "$HOME" codex
+    fi
+  fi
+
+  if [[ "$ONLY" == "all" || "$ONLY" == "claude" ]]; then
+    run mkdir -p "$HOME/.claude"
+
+    local claude_source="$DOTFILES/claude/.claude/CLAUDE.md"
+    local claude_target="$HOME/.claude/CLAUDE.md"
+    if [[ -e "$claude_target" && ! -L "$claude_target" ]]; then
+      if cmp -s "$claude_source" "$claude_target"; then
+        run rm "$claude_target"
+      else
+        err "$claude_target differs from the dotfiles copy"
+        err "Move or reconcile it before installing Claude instructions"
+        exit 1
+      fi
+    fi
+
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "[dry-run] stow -t ~ claude"
+    else
+      cd "$DOTFILES"
+      stow -t "$HOME" claude
     fi
   fi
 
