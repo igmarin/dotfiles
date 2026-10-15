@@ -1,1 +1,21 @@
+# secrets (real keys live only in ~/.zsh/keys.zsh)
 .zsh/keys.zsh
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# agent local state
+.claude/settings.local.json
+CLAUDE.local.md
+.omc/
+.codegraph/
+graphify-out/
+*.bak
+*.pre-*

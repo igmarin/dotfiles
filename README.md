@@ -31,6 +31,14 @@ Personal dotfiles shared across multiple Mac computers.
   - `aliases.zsh` - System and SSH aliases
   - `mlx.zsh` - MLX functions with auto-detection
 
+## AI agents (Claude Code + Codex)
+
+- `claude/CLAUDE.md`, `claude/settings.json` → symlinked to `~/.claude/` by `setup.sh`
+- `codex/AGENTS.md` → symlinked to `~/.codex/`
+- `AGENTS.md` (repo root) holds the rules for agents working in this repo; `CLAUDE.md` imports it
+- `settings.json` denies reads of `.env*`, `~/.ssh`, `~/.aws`, `~/.zsh/keys.zsh` and force-pushes
+- Machine-specific settings (hooks, statusline paths) stay out of git; put them in `~/.claude/settings.local.json`
+
 ## MLX Auto-Detection
 
 The `graphify-mlx` function automatically selects the appropriate model based on architecture:

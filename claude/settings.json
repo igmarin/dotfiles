@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__lean-ctx__*",
+      "mcp__codegraph__*"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(~/.zsh/keys.zsh)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "sonnet",
+  "worktree": { "baseRef": "fresh" },
+  "enabledPlugins": {
+    "i-have-adhd@i-have-adhd": true,
+    "cloudflare@cloudflare": true,
+    "auto-handoff@auto-handoff": true,
+    "oh-my-claudecode@omc": true
+  },
+  "extraKnownMarketplaces": {
+    "i-have-adhd": { "source": { "source": "github", "repo": "ayghri/i-have-adhd" } },
+    "cloudflare": { "source": { "source": "github", "repo": "cloudflare/skills" } },
+    "auto-handoff": { "source": { "source": "github", "repo": "obie/auto-handoff" } },
+    "omc": { "source": { "source": "git", "url": "https://github.com/Yeachan-Heo/oh-my-claudecode.git" } }
+  },
+  "pluginConfigs": {
+    "auto-handoff@auto-handoff": { "options": { "minutes": 55, "command": "auto-handoff:handoff" } }
+  },
+  "theme": "dark-daltonized",
+  "autoContinueAtUsageLimit": true
+}

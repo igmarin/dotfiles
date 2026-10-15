@@ -23,4 +23,14 @@ if [ ! -f "$ZSH_DIR/keys.zsh" ]; then
   echo "⚠️  Keys template copied. Edit $ZSH_DIR/keys.zsh with your actual API keys."
 fi
 
+# Symlink agent configs (backs up any existing real file to *.bak)
+link() {
+  mkdir -p "$(dirname "$2")"
+  if [ -e "$2" ] && [ ! -L "$2" ]; then mv "$2" "$2.bak"; fi
+  ln -sfn "$1" "$2"
+}
+link "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+link "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+
 echo "✅ Dotfiles installed. Source ~/.zshrc or restart terminal."
