@@ -4,7 +4,7 @@ for file in ~/.zsh/*.zsh; do
 done
 
 # Bun completions
-[ -s "/Users/igmarin/.bun/_bun" ] && source "/Users/igmarin/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # Version managers
 eval "$(mise activate zsh)"
