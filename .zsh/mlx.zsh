@@ -5,8 +5,8 @@ function mlx-on-demand() {
   local PORT="${2:-8080}"
   local TOKENS="${3:-4096}"
 
-  echo "🚀 Iniciando MLX Server con $MODEL en puerto $PORT..."
-  echo "   Presiona Ctrl+C para detener y liberar RAM."
+  echo "🚀 Starting MLX server with $MODEL on port $PORT..."
+  echo "   Press Ctrl+C to stop and free RAM."
 
   mlx_lm.server \
     --model "$MODEL" \
