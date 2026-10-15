@@ -3,7 +3,7 @@
 
 set -e
 
-DOTFILES_DIR="$HOME/Developer/Personal/dotfiles"
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 ZSH_DIR="$HOME/.zsh"
 
 echo "Setting up dotfiles..."
@@ -21,6 +21,12 @@ cp "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 if [ ! -f "$ZSH_DIR/keys.zsh" ]; then
   cp "$ZSH_DIR/keys.zsh.template" "$ZSH_DIR/keys.zsh"
   echo "⚠️  Keys template copied. Edit $ZSH_DIR/keys.zsh with your actual API keys."
+fi
+
+# Same for machine-specific config (SSH aliases, etc.)
+if [ ! -f "$ZSH_DIR/local.zsh" ]; then
+  cp "$ZSH_DIR/local.zsh.template" "$ZSH_DIR/local.zsh"
+  echo "ℹ️  Edit $ZSH_DIR/local.zsh for machine-specific aliases."
 fi
 
 # Symlink agent configs (backs up any existing real file to *.bak)

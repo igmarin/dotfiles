@@ -1,49 +1,72 @@
 # Dotfiles
 
-Personal dotfiles shared across multiple Mac computers.
+macOS shell + AI-agent (Claude Code, Codex) config, shared across machines.
+No secrets and no machine-specific values are tracked; both live in gitignored files.
 
-## Setup
+## Quick start
 
-1. Clone this repo:
-   ```bash
-   git clone <your-repo-url> ~/Developer/Personal/dotfiles
-   ```
+```bash
+git clone https://github.com/igmarin/dotfiles.git ~/Developer/Personal/dotfiles
+cd ~/Developer/Personal/dotfiles
+./setup.sh                  # works from any clone location
+$EDITOR ~/.zsh/keys.zsh     # paste real keys (never committed)
+$EDITOR ~/.zsh/local.zsh    # machine-specific aliases (never committed)
+exec zsh
+```
 
-2. Run bootstrap:
-   ```bash
-   cd ~/Developer/Personal/dotfiles
-   ./setup.sh
-   ```
+## Prerequisites
 
-3. Configure API keys:
-   - Edit `~/.zsh/keys.zsh` with your actual keys
-   - Template is at `~/.zsh/keys.zsh.template`
+Install first: [Homebrew](https://brew.sh), [oh-my-zsh](https://ohmyz.sh), `mise`, `zoxide`.
+Optional (guarded, skipped if missing): `podman`, `bun`, `mlx-lm`, `graphify`.
+
+## What `setup.sh` does
+
+1. Copies `.zsh/*` to `~/.zsh/` and `.zshrc` to `~/.zshrc`
+2. Creates `~/.zsh/keys.zsh` and `~/.zsh/local.zsh` from their templates if missing (never overwrites)
+3. Symlinks `claude/CLAUDE.md`, `claude/settings.json` into `~/.claude/` and `codex/AGENTS.md` into `~/.codex/`
+4. Moves any existing real file it would replace to `<name>.bak`
+
+Re-running is safe. Since `.zsh/` and `.zshrc` are copies, re-run `setup.sh` after editing them here.
 
 ## Structure
 
-- `.zshrc` - Main entry point (sources all modules)
-- `.zsh/` - Modular configuration:
-  - `env.zsh` - Environment variables
-  - `path.zsh` - PATH configuration
-  - `oh-my-zsh.zsh` - Oh-my-zsh setup
-  - `keys.zsh` - API keys (not in git, use template)
-  - `keys.zsh.template` - Keys template (in git)
-  - `aliases.zsh` - System and SSH aliases
-  - `mlx.zsh` - MLX functions with auto-detection
+```
+.zshrc                  entry point: sources ~/.zsh/*.zsh, bun, mise, zoxide
+.zsh/
+  env.zsh               environment variables
+  path.zsh              PATH, pkg-config, podman socket, bun (brew prefix auto-detected)
+  oh-my-zsh.zsh         oh-my-zsh setup
+  aliases.zsh           shared aliases
+  mlx.zsh               local MLX LLM server helpers
+  keys.zsh.template     API key placeholders        -> copy to keys.zsh   (gitignored)
+  local.zsh.template    host/user-specific aliases  -> copy to local.zsh  (gitignored)
+claude/                 CLAUDE.md, settings.json    -> ~/.claude/
+codex/                  AGENTS.md                   -> ~/.codex/
+AGENTS.md / CLAUDE.md   rules for agents working in this repo
+setup.sh                bootstrap
+```
+
+## Rules for this repo
+
+- **Secrets:** real keys only in `~/.zsh/keys.zsh`. Templates hold `YOUR_…` placeholders.
+- **No hardcoded paths:** use `$HOME`, `$(brew --prefix)`, or derive from the script location. Put hostnames and usernames in `local.zsh`.
+- **Before committing:** `git diff --cached | grep -nEi 'sk-|ghp_|hf_|token=|key='` should show only placeholders.
+- GitHub push protection is on; if it blocks a push, remove the secret from history rather than allowing it.
 
 ## AI agents (Claude Code + Codex)
 
-- `claude/CLAUDE.md`, `claude/settings.json` → symlinked to `~/.claude/` by `setup.sh`
-- `codex/AGENTS.md` → symlinked to `~/.codex/`
-- `AGENTS.md` (repo root) holds the rules for agents working in this repo; `CLAUDE.md` imports it
-- `settings.json` denies reads of `.env*`, `~/.ssh`, `~/.aws`, `~/.zsh/keys.zsh` and force-pushes
-- Machine-specific settings (hooks, statusline paths) stay out of git; put them in `~/.claude/settings.local.json`
+- `claude/CLAUDE.md` and `codex/AGENTS.md` are global instructions (always-on complexity check, ponytail, secrets rules).
+- `claude/settings.json` is the portable subset: allowed MCP tools, plugins, and deny rules for `.env*`, `~/.ssh`, `~/.aws`, `keys.zsh` and force-pushes.
+- Machine-specific hooks and statusline paths go in `~/.claude/settings.local.json`, not here.
+- Because they are symlinks, tools that edit `~/.claude/CLAUDE.md` (lean-ctx, CodeGraph) change the repo file; review with `git diff` before committing.
 
-## MLX Auto-Detection
+## MLX helpers
 
-The `graphify-mlx` function automatically selects the appropriate model based on architecture:
-- Apple Silicon (arm64): Llama-3.2-3B-Instruct-4bit
-- Intel (x86_64): Llama-3.2-3B-Instruct-4bit
-- Fallback: Phi-4-mini-instruct-4bit
+`graphify-mlx {init|extract|update}` starts a local MLX server, runs graphify, then stops the server.
+Model is `$OPENAI_MODEL` if set, otherwise auto-detected by CPU architecture (`detect_mlx_model` in `.zsh/mlx.zsh`).
+`mlx-on-demand [model] [port] [tokens]` runs the server alone.
 
-Override by setting `OPENAI_MODEL` environment variable before running.
+## Troubleshooting
+
+- **Push blocked by secret scanning:** `git rm --cached <file>`, add it to `.gitignore`, amend or rewrite the commit that added it, then rotate the key if it was ever pushed.
+- **Slow shell start:** `brew --prefix` and `podman machine inspect` run at startup; both are guarded and cached in `HOMEBREW_PREFIX` where possible.

@@ -1,0 +1,5 @@
+# Machine-specific config. Copy to local.zsh (gitignored) and edit.
+# Keep hostnames, usernames and other personal identifiers here, not in tracked files.
+
+# SSH aliases
+# alias myhost="ssh <user>@<host>.local"

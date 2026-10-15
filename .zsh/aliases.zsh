@@ -4,9 +4,7 @@ alias systemup="brew update && brew upgrade && brew autoremove && brew cleanup &
 # macOS caffeine
 alias wakeup="caffeinate -u -t 5"
 
-# Computer SSH aliases
-alias cerebro="ssh igmarin@cerebro.local"
-alias bravo="ssh ismaelguillermomarincabrera@bravo.local"
-
 # Podman alias
 alias docker=podman
+
+# Machine-specific aliases (SSH hosts, usernames) live in ~/.zsh/local.zsh (not in git)

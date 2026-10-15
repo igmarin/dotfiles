@@ -1,5 +1,6 @@
 # secrets (real keys live only in ~/.zsh/keys.zsh)
 .zsh/keys.zsh
+.zsh/local.zsh
 .env
 .env.*
 !.env.example
